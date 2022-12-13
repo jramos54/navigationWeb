@@ -96,18 +96,17 @@ def pageNavigation(iters):
     time.sleep(2)
 
 def navegarSitio(iters):
+    
     paginas=driver.find_elements(By.XPATH,'//a[@href]')
-    links=[pagina.get_attribute('href') for pagina in paginas]
-    link=random.choice(links)
-    print(type(link),link)
-    validLink=True
-    while validLink:
-        if 'http' in link:
-            target=driver.find_element(By.XPATH,'//a[@href="'+link+'"]')
-            driver.execute_script("arguments[0].click();",target)
-            validLink=False
-        else:
-            link=random.choice(links)
+    varcontinue=True
+    while varcontinue:
+      link=random.choice(paginas)
+      if link.is_displayed() and link.is_enabled():
+        target=link.get_attribute('href')
+        driver.get(target)
+        varcontinue=False
+    print(f"{driver.title} en \n{driver.current_url}")
+
     pageNavigation(iters)
 
 
