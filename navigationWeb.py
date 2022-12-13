@@ -15,6 +15,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 #importing time library
 import time
+import random   #Import random from changues required on 12/12/22
 
 #defining functions to be used
 def scrolling(wait,direction,step):
@@ -62,12 +63,12 @@ def googleNavigation(urlweb):
             y=pagina.location['y']
             print(f"{pagina.location} > {pagina.text}")
 #scrolling down
-    scrolling(3,True,10)
+    scrolling(2,True,10)
     time.sleep(.1)
 #Evaluate if the url target exist in the current page
     if page_exist:
 #Scrolling up
-        scrolling(3,False,10)
+        scrolling(2,False,10)
 #Scrolling to the location of url target
         argument=f"window.scrollTo(0, {y})"
         driver.execute_script(argument)
@@ -85,37 +86,55 @@ def googleNavigation(urlweb):
 def pageNavigation(iters):
     down=True
     for iter in range(iters):
-        scrolling(3,down,10)
+        espera=random.randint(1,5)
+        print(f'Las esperas son de {espera} segundos')
+        scrolling(espera,down,10) # Segenera el random entre 1 y 5 para las pausas del scrolling
         if down:
             down=False
         else:
             down=True
-    time.sleep(4)
+    time.sleep(2)
+
+def navegarSitio(iters):
+    paginas=driver.find_elements(By.XPATH,'//a[@href]')
+    links=[pagina.get_attribute('href') for pagina in paginas]
+    link=random.choice(links)
+    print(type(link),link)
+    validLink=True
+    while validLink:
+        if 'http' in link:
+            target=driver.find_element(By.XPATH,'//a[@href="'+link+'"]')
+            driver.execute_script("arguments[0].click();",target)
+            validLink=False
+        else:
+            link=random.choice(links)
+    pageNavigation(iters)
+
 
 chrome_options=webdriver.ChromeOptions()
 chrome_options.add_experimental_option('detach',True)
 chrome_options.add_experimental_option("useAutomationExtension", False)
 chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
-driver=webdriver.Chrome(executable_path=r"\CodingProjects\navigationWeb\chromedriver.exe",chrome_options=chrome_options)
+#driver=webdriver.Chrome(executable_path=r"\CodingProjects\navigationWeb\chromedriver.exe",chrome_options=chrome_options)
 
-driver.maximize_window()
-time.sleep(1)
 ##################################################################
 #                   INPUTS                                       #
 ##################################################################
 criterio_busqueda="Ferreterias en pachuca"
 urlweb="https://ferrefaster.com/"#"https://www.nfh.com.mx/"#"https://www.ferreteriasrc.com/"#"https://ferefaster.com"
-repeticiones=3
+repeticiones=2
 
 ##################################################################
 #                     MAIN                                       #
 ##################################################################
-driver.get('https://google.com')
 
 for k in range(repeticiones):
-    driver.execute_script("window.open('https://www.google.com')")
-    driver.switch_to.window(driver.window_handles[1])
-
+    #Se abre el navegador al incio del ciclo
+    driver=webdriver.Chrome(executable_path=r"\CodingProjects\navigationWeb\chromedriver.exe",chrome_options=chrome_options)
+    driver.get('https://google.com')
+    driver.maximize_window()
+    time.sleep(1)
+   
     print(f"Se accedio a: {driver.title}\nEn la url: {driver.current_url} ")
     time.sleep(1)
 
@@ -123,7 +142,6 @@ for k in range(repeticiones):
     for letra in criterio_busqueda:
         input_box.send_keys(letra)
         time.sleep(.35)
-    #input_box.send_keys(criterio_busqueda)
     print(f"Se ingreso el criterio de busqueda: {criterio_busqueda}")
     time.sleep(2)
     input_box.send_keys(Keys.ENTER)
@@ -134,14 +152,15 @@ for k in range(repeticiones):
         page_found=googleNavigation(urlweb)
 
     print(f"Se ingreso a la pagina: {driver.title}\nEn url: {driver.current_url}")
-
-    pageNavigation(3)
-
-    driver.switch_to.window(driver.window_handles[1])
-    driver.close()
+    navega=random.randint(1,5)
+    print(f'Se navegara {navega} veces')
+    pageNavigation(navega) #se genera el random entre 1y 5 para el numero de veces que navega
+    ########################################################
+    #   se navega en pagina aleatoria del sitio            #
+    ########################################################
+    navega=random.randint(1,5)
+    navegarSitio(navega)
+    driver.close() # Se cierra el navegador al final de la navegacion
     time.sleep(2)
-    driver.switch_to.window(driver.window_handles[0])
-
-
-driver.quit()
-
+driver.quit()    
+print('se finalizo la navegacion')
