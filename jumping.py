@@ -18,23 +18,15 @@ chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
 driver=webdriver.Chrome(executable_path=r"\CodingProjects\navigationWeb\chromedriver.exe",chrome_options=chrome_options)
 driver.get('https://ferrefaster.com/')
 
+
 paginas=driver.find_elements(By.XPATH,'//a[@href]')
-links=[pagina.get_attribute('href') for pagina in paginas]
-
-link=random.choice(links)
-print(type(link),link)
-
-validLink=True
-while validLink:
-    if 'http' in link:
-        #element = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.XPATH,'//a[@href="'+link+'"]')))
-        #target=driver.find_element(By.XPATH,'//a[@href="'+link+'"]')
-        #driver.execute_script("arguments[0].click();",target)
-        target=f"window.open('{link}')"
-        driver.execute(target)
-        
-        validLink=False
-    else:
-        link=random.choice(links)
+varcontinue=True
+while varcontinue:
+  link=random.choice(paginas)
+  if link.is_displayed() and link.is_enabled():
+    target=link.get_attribute('href')
+    driver.get(target)
+    varcontinue=False
+print(f"{driver.title} en \n{driver.current_url}")
 
 driver.quit()
