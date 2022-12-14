@@ -119,10 +119,15 @@ chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
 ##################################################################
 #                   INPUTS                                       #
 ##################################################################
-criterio_busqueda="Ferreterias en pachuca"
-urlweb="https://ferrefaster.com/"#"https://www.nfh.com.mx/"#"https://www.ferreteriasrc.com/"#"https://ferefaster.com"
-repeticiones=2
-
+criterio_busqueda=input('ingresa el criterio de busqueda:\t ')
+urlweb=input('ingresa la URL del sitio:\t ')#"https://ferrefaster.com/"#"https://www.nfh.com.mx/"#"https://www.ferreteriasrc.com/"#"https://ferefaster.com"
+numerico=True
+while numerico:
+    try:
+        repeticiones=int(input('ingresa el numero de veces que se repite el proceso:\t '))#2
+        numerico=False
+    except:
+        print('por favor ingresa un numero')
 ##################################################################
 #                     MAIN                                       #
 ##################################################################
