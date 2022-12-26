@@ -74,7 +74,7 @@ def googleNavigation(urlweb):
         driver.execute_script(argument)
         print(f'movimiento hacia: {driver.execute_script("return window.scrollY"):.0f}')
 #Click to the url target
-        target = driver.find_element(By.XPATH,'//a[@href="'+ urlweb +'"]')
+        target = driver.find_element(By.PARTIAL_LINK_TEXT,urlweb[:-1])#(By.XPATH,'//a[@href="'+ urlweb[:-1] +'"]')
         driver.execute_script("arguments[0].click();", target)
     else:
 #clcik to the next button in google page
@@ -93,9 +93,9 @@ def pageNavigation(iters):
             down=False
         else:
             down=True
-    time.sleep(2)
+    time.sleep(1)
 
-def navegarSitio(iters):
+def navegarSitio(iters,urlweb):
     
     paginas=driver.find_elements(By.XPATH,'//a[@href]')
     varcontinue=True
@@ -103,8 +103,10 @@ def navegarSitio(iters):
       link=random.choice(paginas)
       if link.is_displayed() and link.is_enabled():
         target=link.get_attribute('href')
-        driver.get(target)
-        varcontinue=False
+        if urlweb in target:
+            driver.get(target)
+            varcontinue=False
+
     print(f"{driver.title} en \n{driver.current_url}")
 
     pageNavigation(iters)
@@ -163,8 +165,8 @@ for k in range(repeticiones):
     #   se navega en pagina aleatoria del sitio            #
     ########################################################
     navega=random.randint(1,5)
-    navegarSitio(navega)
+    navegarSitio(navega,urlweb)
     driver.close() # Se cierra el navegador al final de la navegacion
-    time.sleep(2)
+    time.sleep(1)
 driver.quit()    
 print('se finalizo la navegacion')
