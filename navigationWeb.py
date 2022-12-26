@@ -16,6 +16,13 @@ from selenium.webdriver.common.keys import Keys
 #importing time library
 import time
 import random   #Import random from changues required on 12/12/22
+import os
+import stem.process
+import re
+import urllib.request
+from datetime import datetime
+from fake_useragent import UserAgent
+
 
 #defining functions to be used
 def scrolling(wait,direction,step):
@@ -111,12 +118,59 @@ def navegarSitio(iters,urlweb):
 
     pageNavigation(iters)
 
-
+##########################################
+#            CONSTANTS
+##########################################
+SOCKS_PORT=9050
+PATH_TORBROWSER=os.path.normpath(os.getcwd()+'\\torbrowser\\tor\\tor.exe')
+PATH_GEOIP=os.path.normpath(os.getcwd()+'\\torbrowser\\data\\geoip')
+PATH_CHROME=os.path.normpath(os.getcwd()+'\\torbrowser\\chromedriver.exe')
+##########################################
+#             TOR LOCATIONS
+#########################################
+try:
+    urllib.request.urlretrieve('https://raw.githubusercontent.com/torproject/tor/main/src/config/geoip',PATH_GEOIP)
+except:
+    print('no se pudo conectar')
+##########################################
+#         TOR CONFIGURATION
+##########################################
+tor_process=stem.process.launch_tor_with_config(
+    config={
+        'SocksPort':str(SOCKS_PORT),
+        'EntryNodes':'{US}',
+        'ExitNodes':'{MX}',
+        'StrictNodes':'1',
+        'CookieAuthentication':'1',
+        'MaxCircuitDirtiness':'60',
+        'GeoIPFile':PATH_GEOIP,
+    },
+    init_msg_handler=lambda line:print(line) if re.search('Bootstrapped',line) else False,
+    tor_cmd=PATH_TORBROWSER
+)
+##########################################
+#       PROXIES
+##########################################
+PROXIES={
+    'http':'socks5://127.0.0.1:9050',
+    'https':'socks5://127.0.0.1:9050'
+}
+PROXY='socks5://localhost:9050'
+##########################################
+#             CHROME CONFIGURATION
+##########################################
 chrome_options=webdriver.ChromeOptions()
 chrome_options.add_experimental_option('detach',True)
 chrome_options.add_experimental_option("useAutomationExtension", False)
 chrome_options.add_experimental_option("excludeSwitches",["enable-automation"])
+chrome_options.add_argument('--proxy-server=%s'%PROXY)
+chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 #driver=webdriver.Chrome(executable_path=r"\CodingProjects\navigationWeb\chromedriver.exe",chrome_options=chrome_options)
+#options = Options()
+ua = UserAgent()
+userAgent = ua.random
+print(userAgent)
+chrome_options.add_argument(f'user-agent={userAgent}')
 
 ##################################################################
 #                   INPUTS                                       #
@@ -136,7 +190,7 @@ while numerico:
 
 for k in range(repeticiones):
     #Se abre el navegador al incio del ciclo
-    driver=webdriver.Chrome(executable_path=r"\CodingProjects\navigationWeb\chromedriver.exe",chrome_options=chrome_options)
+    driver=webdriver.Chrome(executable_path=PATH_CHROME,chrome_options=chrome_options)
     driver.get('https://google.com')
     driver.maximize_window()
     time.sleep(1)
@@ -168,5 +222,8 @@ for k in range(repeticiones):
     navegarSitio(navega,urlweb)
     driver.close() # Se cierra el navegador al final de la navegacion
     time.sleep(1)
-driver.quit()    
+
+tor_process.kill()
+driver.quit() 
+
 print('se finalizo la navegacion')
