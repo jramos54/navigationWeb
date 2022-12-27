@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title> Navegador Automatico </title>
+    </head>
+
+    <style>
+        input[type=text], select {
+        width: 50%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+        width: 30%;
+        background-color: #4c4faf;
+        color: white;
+        padding: 15px 20px;
+        margin: 20px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+        background-color: #45a049;
+        }
+        
+        p {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+        }
+    </style>
+
+<body>
+
+    <form method="post" action="/automation">
+        <label for="criterio_busqueda">Criterio de busqueda:</label><br>
+        <input type="text" id="criterio_busqueda" name="criterio_busqueda" value=""><br><br>
+
+        <label for="urlweb">URL de la pagina:</label><br>
+        <input type="text" id="urlweb" name="urlweb" value=""><br><br>
+
+        <label for="repeticiones">Numero de repeticiones:</label><br>
+        <input type="number" id="repeticiones" name="repeticiones" value="1"><br><br>
+
+        <input type="submit" id="btn-form" value="Run automation" name="action">
+    </form> 
+    
+ 
+</body>
+</html>
