@@ -11,8 +11,8 @@ import random
 app=Flask(__name__,template_folder='template')
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def automation():
+    return render_template('automation.html')
 
 @app.route('/automation', methods=['get','POST'])
 def run_automation():
@@ -40,7 +40,6 @@ def googleNavigation(urlweb):
     paginas=driver.find_elements(By.PARTIAL_LINK_TEXT,'https:')
     page_exist=False
     for pagina in paginas:
-        print(pagina.text)
         if pagina.text.find(urlweb[:-1])==-1:
             continue
         else:
@@ -116,7 +115,6 @@ def navigation_web(criterio_busqueda,urlweb,repeticiones):
 
     driver.quit()
     return 'Se completo la navegacion'
-
 
 if __name__ == '__main__':
     app.run(debug=True)
